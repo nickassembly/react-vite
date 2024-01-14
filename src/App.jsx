@@ -67,6 +67,7 @@ function App() {
 
   const [visibleTab, tabDispatch] = useReducer(tabReducer, 1);
 
+  // multiple contexts required
   return (
       <>
           <CounterContext.Provider value={counterData}>
