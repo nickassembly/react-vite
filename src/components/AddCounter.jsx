@@ -1,34 +1,47 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
+import { CounterDispatchContext } from '../contexts/context.js';
 
 
 export function AddCounter() {
-
-    const [counterName, setCounterName] = useState('');
+    const counterDispatch = useContext(CounterDispatchContext);
+    const [counterShortName, setCounterShortName] = useState('');
+    const [counterLongName, setCounterLongName] = useState('');
+    const [tab, setTab] = useState(1);
     const [startingValue, setStartingValue] = useState(1);
 
     const handleSubmit = (event) => {
         event.preventDefault();
 
-        console.log(counterName);
-        console.log(startingValue);
-
-        const form = event.target;
-        const formData = new FormData(form);
-        console.log(...formData);
-
-        const formJson = Object.fromEntries(formData.entries());
-        console.log(formJson);
+        counterDispatch({
+            type: 'add',
+            data: {
+                shortName: counterShortName,
+                longName: counterLongName,
+                tab: Number(tab),
+                startingValue: Number(startingValue)
+            }
+        });
     }
 
-    // Textarea next
 
     return (
         <>
             <form method="post" onSubmit={handleSubmit}>
-                <h2>Add {counterName} </h2>
+                <h2>Add {counterShortName} </h2>
                 <p>
-                    <label htmlFor="counterName">Name</label>
-                    <input type="text" value={counterName} id="counterName" name="counterName" onChange={(event) => {setCounterName(event.target.value)}}/>
+                    <label htmlFor="counterShortName">Short Name</label>
+                    <input type="text" value={counterShortName} id="counterShortName" name="counterShortName" onChange={(event) => {setCounterShortName(event.target.value)}}/>
+                </p>
+                <p>
+                    <label htmlFor="counterLongName">Long Name</label>
+                    <textarea type="text" value={counterLongName} id="counterLongName" name="counterLongName" onChange={(event) => {setCounterLongName(event.target.value)}}/>
+                </p>
+                <p>
+                    <label htmlFor="tab">Tab</label>
+                    <select value={tab} id="tab" name="tab" onChange={(event) => {setTab(event.target.value)}}>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                    </select>
                 </p>
                 <p>
                     <label htmlFor="startingValue">Starting Value</label>

@@ -15,7 +15,7 @@ export function CounterList() {
     }, [counterData, visibleTab]);
     return (
         <section>
-            { filteredCounterData.map((counter) => (
+            { counterData.map((counter) => (
                 <Counter counter={counter} key={counter.id} />
             ))}
         </section>
