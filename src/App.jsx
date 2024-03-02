@@ -1,40 +1,43 @@
-import { useReducer } from 'react'
-import { CounterObj } from './models/counterObj.js';
-import { counterReducer } from './reducers/counterReducer.js';
-import { tabReducer } from './reducers/tabReducer.js';
-import { CounterContext, CounterDispatchContext, TabContext, TabDispatchContext } from './contexts/context.js';
-import { CounterList } from './components/CounterList.jsx';
-import { CounterTools } from './components/CounterTools.jsx';
-import { AddCounter } from './components/AddCounter.jsx';
-import './App.css'
+import { useEffect, useState } from 'react';
+import { Header } from './components/Header.jsx';
+import { Honeycomb } from './components/Honeycomb.jsx';
+import './App.css';
+
 
 function App() {
-    const [counterData, counterDispatch] = useReducer(counterReducer, [
-        new CounterObj(1, { longName: 'Counter A', shortName: 'A' }, 1, 0),
-        new CounterObj(2, { longName: 'Counter B', shortName: 'B' }, 1, 0),
-        new CounterObj(3, { longName: 'Counter C', shortName: 'C' }, 1, 0)
-    ]);
-
-    const [visibleTab, tabDispatch] = useReducer(tabReducer, 1);
-
+    
+    const [data, setData] = useState();
+    // get data on initial render only
+    useEffect(() => {
+        async function fetchData() {
+            const result = await fetch('/api/data.json', {
+                    headers: { "Content-Type": "application/json" } })
+                    const json = await result.json();
+                    setData(json.data.today);
+            }
+            fetchData()
+    }, []);
+   
     return (
         <>
-            <CounterContext.Provider value={counterData}>
-                <CounterDispatchContext.Provider value={counterDispatch}>
-                    <TabContext.Provider value={visibleTab}>
-                        <TabDispatchContext.Provider value={tabDispatch}>
-                            <h1 class="header">Counters</h1>
-                            <section>
-                                <AddCounter />
-                            </section>
-                            <section>
-                                <CounterList />
-                                <CounterTools />
-                            </section>
-                        </TabDispatchContext.Provider>
-                    </TabContext.Provider>
-                </CounterDispatchContext.Provider>
-            </CounterContext.Provider>
+        { data 
+            ? 
+                <>
+                    <Header date={data.displayDate} editor={data.editor} /> 
+                    <section className="container">
+                        <div className="inputs">
+                            <div className="center">
+                                <Honeycomb 
+                                    centerLetter={data.centerLetter}
+                                    outerLetters={data.outerLetters}
+                                    validLetters={data.validLetters} 
+                                />
+                            </div>
+                        </div>
+                    </section>
+                </>
+            : <p>...Loading</p> 
+        }
         </>
     );
 }
